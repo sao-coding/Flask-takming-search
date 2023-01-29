@@ -44,23 +44,5 @@ class EditStudentForm(FlaskForm):
     emergency_contact_phone = StringField('緊急聯絡人電話', validators=[DataRequired()])
     submit = SubmitField('更新資料')
 
-
-# class DeleteProductForm(FlaskForm):
-#     # 移除商品的表單
-#     # 確認刪除
-#     confirm = BooleanField('確認是否移除?', validators=[DataRequired()])
-#     # 送出按鈕
-#     submit = SubmitField('移除商品')
-
-
-# class CreateCommentForm(FlaskForm):
-#     # 新增留言的表單
-#     email = StringField('Email', validators=[DataRequired()])
-#     content = TextAreaField('留言內容', validators=[DataRequired()])
-#     submit = SubmitField('發佈留言')
-
-
-# class UpdateCommentForm(FlaskForm):
-#     # 更新留言的表單
-#     content = TextAreaField('留言內容', validators=[DataRequired()])
-#     submit = SubmitField('發佈留言')
+class SearchStudentForm(FlaskForm):
+    room = StringField('房間', validators=[DataRequired()])

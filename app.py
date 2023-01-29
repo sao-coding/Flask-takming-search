@@ -1,6 +1,7 @@
 from forms import (
     CreateStudentForm,
     EditStudentForm,
+    SearchStudentForm,
 )
 from flask import Flask, render_template, request, session, redirect, url_for, flash, jsonify, abort
 import time
@@ -135,10 +136,25 @@ def admin_page():
     result = []
     page_list = []
     last_page = int(len(student_list) / page_len) + 1 if len(student_list) % page_len != 0 else int(len(student_list) / page_len)
+    
+    total = 0
+    count = 0
+    form = SearchStudentForm()
+    if form.validate_on_submit():
+        for i in range(len(student_list)):
+            total += 1
+            if form.room.data == student_list[i]['room']:
+                count += 1
+                if count == page_len:
+                    break
+        page = total // 6
+        return redirect("/admin?page="+str(page))
 
-    # if page - 1 >= 0:
-    #     page_list.append('#')
-
+    for  i in range(page_len):
+        index = (page_len * (page - 1)) + i
+        if index < len(student_list):
+            result.append(student_list[index])
+    student_list = result
     if page - 1 < 1:
         page_list.append(str(page)+"#")
         page_list.append(page)
@@ -161,17 +177,8 @@ def admin_page():
         page_list.append(4)
     # print('[page_list]', page_list)
 
-    
-    for  i in range(page_len):
-        
-        index = (page_len * (page - 1)) + i
-        # print('[index]', index)
-        if index < len(student_list):
-            result.append(student_list[index])
-    student_list = result
-    # # print('[result]', result)
-    # # print('[student_list]', student_list)
-    return render_template('admin/index.html', student_list=student_list, page=page, page_list=page_list, last_page=last_page)
+
+    return render_template('admin/index.html', student_list=student_list, page=page, page_list=page_list, last_page=last_page, form=form)
 
 
 @app.route('/admin/create', methods=['GET', 'POST'])

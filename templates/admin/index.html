@@ -31,17 +31,13 @@
     </div> -->
 
     <div class="relative shadow-md sm:rounded-lg overflow-hidden">
-
-
-
         <table class="w-full table-fixed text-sm text-center text-gray-500 dark:text-gray-400">
             <caption
                 class="p-5 text-lg font-semibold text-left text-gray-900 bg-white dark:text-white dark:bg-gray-800">
                 <div class="md:flex md:justify-between">
                     <div class="">
                         住宿生基本資料
-                        <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">開發人員感覺快要掛了，因為懶對所以此處沒有搜尋功能
-                        </p>
+                        <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">開發人員感覺快要掛了，請給我錢錢</p>
                     </div>
                     <div class="">
                         <label for="table-search" class="sr-only">Search</label>
@@ -54,15 +50,17 @@
                                         clip-rule="evenodd"></path>
                                 </svg>
                             </div>
-                            <input type="text" id="table-search"
-                                class="block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                placeholder="Search for items">
+                            <form action="" method="post">
+                                {{ form.hidden_tag() }}
+                                {{ form.room(class="block p-2 pl-10 text-sm text-gray-900 border border-gray-300
+                                rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700
+                                dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500
+                                dark:focus:border-blue-500",placeholder="搜尋房號") }}
+                            </form>
                         </div>
                     </div>
                 </div>
-
             </caption>
-
             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
                     <th scope="col" class="md:px-6 py-3">
@@ -169,8 +167,6 @@
             </ul>
         </nav>
     </div>
-
 </div>
-
 
 {% endblock %}

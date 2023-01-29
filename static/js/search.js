@@ -17,20 +17,6 @@ for (let i = 0; i < searchSwitch.length; i++) {
     });
 }
 
-
-// searchSwitch.addEventListener('click', (event) => {
-//     event.preventDefault();
-//     // console.log(searchSwitch.elements.length);
-//     for (let i = 0; i < searchSwitch.length; i++) {
-//         searchSwitch[i].classList.remove('active');
-//     }
-//     event.target.classList.add('active');
-// });
-
-
-
-
-
 const searchAnswer = document.querySelector('#search-answer')
 searchAnswer.addEventListener('input', (event) => {
     console.log(event.target.value);
@@ -101,7 +87,7 @@ searchAnswer.addEventListener('input', (event) => {
                 }
                 ).then(data => {
                     console.log(data);
-                    let img = "<img src='https://tipfile.takming.edu.tw/stuphoto/" + data.student_ID + ".jpg' class='w-20 h-auto rounded-lg'>";
+                    let img = "<img src='https://tipfile.takming.edu.tw/stuphoto/" + data.student_ID + ".jpg' class='w-20 h-auto rounded-lg' alt='TIP無此照片'>";
                     let title = ['照片', '國別', '房號', '床號', '班級', '學號', '姓名', '身分證字號', '生日', '手機', '家裡電話', '地址', '緊急聯絡人', '緊急聯絡人電話', '建立時間'];
                     let student = [img, data.country, data.room, data.bed, data.member_class, data.student_ID, data.name, data.ID_number, data.birthday, data.phone, data.home_phone, data.address, data.emergency_contact, data.emergency_contact_phone, data.created_at];
                     for (let i = 0; i < title.length; i++) {

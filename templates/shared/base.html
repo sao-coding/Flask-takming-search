@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>宿舍查詢系統</title>
+    <link rel="stylesheet" href="../../static/css/output.css">
+    <link rel="stylesheet" href="../../static/css/style.css">
+    <script src="https://kit.fontawesome.com/1e975f4be4.js" crossorigin="anonymous"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.3/flowbite.min.js"></script> -->
+</head>
+
+<body class="relative bg-gray-200 dark:bg-slate-800">
+    {% include 'shared/login_modal.html' %}
+
+
+    {% block body %}
+    {% endblock %}
+    <!-- FireBase.js -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.16.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.16.0/firebase-analytics.js";
+
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+            apiKey: "AIzaSyBUDSzFrL9nXjfYJoJnwaoOZ0HPB2hkVrw",
+            authDomain: "life-group-94de2.firebaseapp.com",
+            projectId: "life-group-94de2",
+            storageBucket: "life-group-94de2.appspot.com",
+            messagingSenderId: "611056723561",
+            appId: "1:611056723561:web:29cac7d58b167fee8a64f8",
+            measurementId: "G-Y026SE9H5P"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+    </script>
+    <!-- csrf-token -->
+    <script>
+        const csrfToken = '{{ csrf_token() }}';
+    </script>
+    <script>
+        // On page load or when changing themes, best to add inline in `head` to avoid FOUC
+        console.log(localStorage.theme)
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark')
+            const darkMode = document.querySelector('.theme-switch');
+            if (darkMode) {
+                darkMode.checked = true;
+            }
+        } else {
+            document.documentElement.classList.remove('dark')
+        }
+        // if (window.matchMedia('(prefers-color-scheme: dark)').matches && localStorage.theme !== 'light') {
+        //     document.documentElement.classList.add('dark')
+        //     const darkMode = document.querySelector('.theme-switch');
+        //     darkMode.checked = true;
+        //     localStorage.theme = 'dark'
+        // } else {
+        //     document.documentElement.classList.remove('dark')
+        //     localStorage.theme = 'light'
+        // }
+
+        // Whenever the user explicitly chooses light mode
+        // localStorage.theme = 'light'
+
+        // Whenever the user explicitly chooses dark mode
+        // localStorage.theme = 'dark'
+
+        // Whenever the user explicitly chooses to respect the OS preference
+        // localStorage.removeItem('theme')
+    </script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.3/flowbite.min.js"></script> -->
+    <!-- account.js -->
+    <script type="module" src="/static/js/account.js"></script>
+    <!-- main.js -->
+    <script src="/static/js/main.js"></script>
+    {% block script %}
+    {% endblock %}
+</body>
+
+</html>

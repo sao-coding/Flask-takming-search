@@ -1,0 +1,166 @@
+@font-face {
+    font-family: "cute";
+    src: url(../font/cute.woff2);
+}
+
+html {
+    font-family: "cute";
+}
+
+#mobile-menu-1 {
+    position: absolute;
+    top: 50px;
+    
+}
+@media screen and (max-width: 768px) {
+    #mobile-menu-1 {
+        right: 10px;
+    }
+}
+
+.search {
+    position: relative;
+    border: 3px solid transparent;
+    border-radius: 9px;
+    background: white;
+    background-clip: padding-box;
+    padding: 0.625rem 1.25rem;
+    justify-content: center;
+    align-items: center;
+    display: inline-flex;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
+    transition-duration: 75ms;
+    /* just to show box-shadow still works fine */
+    /* z-index: 4; */
+    /* box-shadow: 0 3px 9px black, inset 0 0 9px white; */
+}
+
+.search::after {
+    position: absolute;
+    top: -3px;
+    bottom: -3px;
+    left: -3px;
+    right: -3px;
+    background: linear-gradient(to bottom right, #ec4899, #fb923c);
+    content: '';
+    z-index: -1;
+    border-radius: 9px;
+}
+
+.search:hover {
+    position: relative;
+    border: 3px solid transparent;
+    border-radius: 9px;
+    background: linear-gradient(to bottom right, #ec4899, #fb923c);
+    background-clip: padding-box;
+    padding: 0.625rem 1.25rem;
+    color: white;
+}
+
+.search.active {
+    color: white;
+    background-image: linear-gradient(to bottom right, #ec4899, #fb923c);
+}
+
+#test {
+    padding: 20px;
+    background: linear-gradient(to bottom right, #ec4899, #fb923c);
+}
+
+.pagination {
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+.card {
+    /* width: 20rem;
+    height: 25rem; */
+    /* width: calc(50% - 2rem);
+    min-width: calc(50% - 2rem); */
+    height: 14rem;
+    margin: 1rem;
+    border: 2px solid rgb(160, 5, 5);
+    position: relative;
+    perspective: 150rem;
+    /* overflow: hidden; */
+    border-radius: 10px;
+}
+
+.card .cover,
+.card .back {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    font-size: 2rem;
+    color: #fff;
+    /* padding: 9rem 5rem; */
+    box-sizing: border-box;
+    transform-style: preserve-3d;
+    transition: all 1s;
+    backface-visibility: hidden;
+    /* overflow: hidden; */
+    border-radius: 10px;
+}
+
+.card .cover {
+    /* width: 100%;
+    height: 100%; */
+    /* background-image: url(https://cdn.sao-x.com/cover/131.webp); */
+    background: rgb(250, 140, 110);
+    background-size: cover;
+    /* background-position: center; */
+    
+}
+
+.back {
+    background: rgb(255, 255, 255);
+    transform: rotateY(180deg);
+}
+
+/* .card:hover .font {
+    transform: rotateY(-180deg);
+}
+
+.card:hover .back {
+    transform: rotateY(0);
+} */
+
+
+.card.active .cover {
+    transform: rotateY(-180deg);
+}
+
+.card.active .back {
+    transform: rotateY(0);
+}
+
+/* 滾動條樣式 */
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: rgba(245, 119, 73, 0.2);
+    border-radius: 2em;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #fa6e52;
+    background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.4) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.4) 50%, rgba(255, 255, 255, 0.4) 75%, transparent 75%, transparent);
+    border-radius: 2em;
+}
+
+::-webkit-scrollbar-corner {
+    background-color: transparent;
+}
+
+::-moz-selection {
+    color: #fff;
+    background-color: #fa6e52;
+}

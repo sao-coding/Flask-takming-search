@@ -29,28 +29,6 @@ const closeLoginForm = () => {
     login_modal.classList.add("opacity-0", "pointer-events-none");
 }
 
-
-
-// const loginUsername = document.querySelector('#test');
-// loginUsername.addEventListener('submit', (event) => {
-//     event.preventDefault();
-//     fetch('/api/login/user', {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json',
-//             'X-CSRFToken': csrfToken,
-//         },
-//         body: JSON.stringify({
-//             username: loginUsername.user.value,
-//         })
-//     }).then(response => {
-//         return response.json();
-//     }
-//     ).then(data => {
-//         console.log(data.email);
-//     })
-// });
-
 // 黑暗模式
 // let theme = localStorage.getItem('theme');
 const dark_mode = () => {

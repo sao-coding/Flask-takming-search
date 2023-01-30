@@ -66,12 +66,15 @@ searchAnswer.addEventListener('input', (event) => {
             btn.classList.add('lookData-btn', 'text-sm', 'font-medium', 'text-white', 'bg-blue-600', 'dark:bg-blue-500', 'p-1', 'rounded-lg');
             btn.innerHTML = "<i class='fas fa-search'></i><span class='ml-1'>查看</span>";
             btn.addEventListener('click', (event) => {
-                const info_modal = document.querySelector('#info-form');
+                const modalContainer = document.querySelector('#modal-container');
+                modalContainer.classList.remove('out');
+                modalContainer.classList.add("one");
+                // const info_modal = document.querySelector('#info-form');
                 const info_form = document.querySelector('#info-body');
                 console.log(info_form);
                 info_form.innerHTML = '';
-                info_modal.classList.remove("hidden");
-                info_modal.classList.add("flex");
+                // info_modal.classList.remove("hidden");
+                // info_modal.classList.add("flex");
                 console.log(data[i].id);
                 fetch('/api/info', {
                     method: 'POST',
@@ -120,8 +123,10 @@ searchAnswer.addEventListener('input', (event) => {
 const lookData_btn = document.querySelectorAll('.close-info-form');
 for (let i = 0; i < lookData_btn.length; i++) {
     lookData_btn[i].addEventListener('click', (event) => {
-        const info_modal = document.querySelector('#info-form');
-        info_modal.classList.add("hidden");
-        info_modal.classList.remove("flex");
+        const modalContainer = document.querySelector('#modal-container');
+        modalContainer.classList.add('out');
+        // const info_modal = document.querySelector('#info-form');
+        // info_modal.classList.add("hidden");
+        // info_modal.classList.remove("flex");
     });
 }

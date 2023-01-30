@@ -51,8 +51,11 @@ if (deleteBtn !== null) {
             console.log('deleteBtn');
             event.preventDefault();
             const delete_modal = document.querySelector('#delete-form');
-            delete_modal.classList.remove("hidden");
-            delete_modal.classList.add("flex");
+            // delete_modal.classList.remove("hidden");
+            // delete_modal.classList.add("flex");
+            const modalContainer = document.querySelector('#modal-container');
+            modalContainer.classList.remove('out');
+            modalContainer.classList.add("one");
             deleteID = deleteBtn[i].id;
             console.log(deleteID);
         });
@@ -65,9 +68,12 @@ if (closeDeleteForm !== null) {
         closeDeleteForm[i].addEventListener('click', (event) => {
             console.log('closeDeleteForm');
             event.preventDefault();
-            const delete_modal = document.querySelector('#delete-form');
-            delete_modal.classList.add("hidden");
-            delete_modal.classList.remove("flex");
+            const modalContainer = document.querySelector('#modal-container');
+            modalContainer.classList.add('out');
+            // const delete_modal = document.querySelector('#delete-form');
+            // delete_modal.classList.add("hidden");
+            // delete_modal.classList.remove("flex");
+
         });
     }
 }

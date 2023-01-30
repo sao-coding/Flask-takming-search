@@ -45,7 +45,7 @@ searchAnswer.addEventListener('input', (event) => {
         searchResult.innerHTML = '';
         for (let i = 0; i < data.length; i++) {
             const tr = document.createElement('tr');
-            tr.classList.add('search-result', 'pb-2')
+            tr.classList.add('search-result', 'pb-2') // 'wow', 'animate__fadeInUp'
             tr.id = "data-" + data[i].id;
             searchResult.appendChild(tr);;
             const item = document.querySelector(`#data-${data[i].id}`);

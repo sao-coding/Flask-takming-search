@@ -11,6 +11,8 @@ category_options = [
     ('其他', '其他')
 ]
 
+# FIXME:修改學生資料非必填
+
 class CreateStudentForm(FlaskForm):
     country = SelectField('國家', choices=category_options)
     room = StringField('房間', validators=[DataRequired()])
@@ -26,7 +28,6 @@ class CreateStudentForm(FlaskForm):
     emergency_contact = StringField('緊急聯絡人', validators=[DataRequired()])
     emergency_contact_phone = StringField('緊急聯絡人電話', validators=[DataRequired()])
     submit = SubmitField('建立資料')
-
 
 class EditStudentForm(FlaskForm):
     country = SelectField('國家', choices=category_options)

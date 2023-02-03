@@ -32,7 +32,7 @@ for item in f:
         data[title[12]] = line[10]
         data[title[13]] = datetime.datetime.now()
     except:
-        ine = item.split("|")
+        line = item.split("|")
         data[title[0]] = "台灣"
         data[title[1]] = line[0].split("-")[0]
         data[title[2]] = line[0]

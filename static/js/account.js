@@ -2,7 +2,6 @@ const loginForm = document.querySelector('#loginForm');
 // const signUpForm = document.querySelector('#signUpForm');
 const logoutBtn = document.querySelector('#logoutBtn');
 import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.16.0/firebase-auth.js";
-
 loginForm.addEventListener('submit', (event) => {
     event.preventDefault();
     fetch('/api/login/user', {
@@ -18,10 +17,10 @@ loginForm.addEventListener('submit', (event) => {
         return response.json();
     }
     ).then(data => {
-            const form = {
-        email: data.email,
-        password: loginForm.loginPassword.value,
-    };
+        const form = {
+            email: data.email,
+            password: loginForm.loginPassword.value,
+        };
     console.log('[登入]', form);
 
 
@@ -30,6 +29,7 @@ loginForm.addEventListener('submit', (event) => {
         .then(success => {
             success.user.getIdToken().then(idToken => {
                 console.log('[登入成功]', idToken);
+                localStorage.setItem('IDToken', idToken);
                 fetch('/api/login', {
                     method: 'POST',
                     headers: {
@@ -97,6 +97,8 @@ if (logoutBtn !== null) {
             .then(response => response.json())
             .then(data => {
                 console.log('[登出成功]', data);
+                localStorage.removeItem('theme');
+                localStorage.removeItem('IDToken');
                 window.location.href = '/';
             })
         .catch(error => {

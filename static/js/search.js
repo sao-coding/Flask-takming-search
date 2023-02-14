@@ -28,6 +28,7 @@ searchAnswer.addEventListener('input', (event) => {
             'X-CSRFToken': csrfToken,
         },
         body: JSON.stringify({
+            IDToken: localStorage.getItem('IDToken'),
             search: searchAnswer,
         })
     }).then(response => {
@@ -83,6 +84,7 @@ searchAnswer.addEventListener('input', (event) => {
                         'X-CSRFToken': csrfToken,
                     },
                     body: JSON.stringify({
+                        IDToken: localStorage.getItem('IDToken'),
                         id: data[i].id,
                     })
                 }).then(response => {

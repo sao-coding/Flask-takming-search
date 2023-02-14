@@ -15,7 +15,8 @@ cred = credentials.Certificate("./key.json")
 firebase_admin.initialize_app(cred)
 # 建立資料庫的實例(db)
 db = firestore.client()
-
+id_token = ""
+search_student_data = []
 
 # 引用flask相關資源
 # 引用各種表單類別
@@ -83,18 +84,36 @@ def guard():
         'admin_page',
         'create_page',
         'createfinish_page',
+        'edit_page',
+        'delete_student',
     ]
     # 定義登入路由
     login_route_list = [
         'search_page',
+        'search_student',
+        'get_student_info',
     ]
     # 檢查是否為管理員路由
     if current_route in admin_route_list and not is_admin:
         return redirect(url_for('index_page'))
-    
+
     # 檢查是否為登入路由
     if current_route in login_route_list and not is_login:
         return redirect(url_for('index_page'))
+    elif current_route in 'search_page' and is_login:
+        global search_student_data
+        student = []
+        search_student_data = []
+        search = db.collection('student_list').order_by('bed').stream()
+        for item in search:
+            student = item.to_dict()
+            student['id'] = item.id
+            # student['birthday'] = student['birthday'].strftime('%Y-%m-%d')
+            # student['created_at'] = student['created_at'].strftime('%Y-%m-%d %H:%M:%S')
+            search_student_data.append(student)
+        print("抓取所有學生資料")
+        print(len(search_student_data))
+
 
 @app.route('/')
 def index_page():
@@ -117,7 +136,7 @@ def index_page():
     # 首頁路由
     return render_template('index.html', product_list=product_list)
 
-
+# TODO:優化Firebase資料庫的讀取數量
 @app.route('/admin', methods=['GET', 'POST'])
 def admin_page():
     # 管理員路由
@@ -125,18 +144,20 @@ def admin_page():
     if page < 1:
         page = 1
     student_list = []
-    collection = db.collection('student_list').order_by('bed').get()
+    collection = db.collection('student_list').order_by('bed').stream()
     for doc in collection:
         student = doc.to_dict()
         student['id'] = doc.id
         created_at = str(student['created_at']).split('.')[0]
-        student['created_at'] = datetime.datetime.strptime(created_at, '%Y-%m-%d %H:%M:%S')
+        student['created_at'] = datetime.datetime.strptime(
+            created_at, '%Y-%m-%d %H:%M:%S')
         student_list.append(student)
     page_len = 6
     result = []
     page_list = []
-    last_page = int(len(student_list) / page_len) + 1 if len(student_list) % page_len != 0 else int(len(student_list) / page_len)
-    
+    last_page = int(len(student_list) / page_len) + 1 if len(
+        student_list) % page_len != 0 else int(len(student_list) / page_len)
+
     total = 0
     count = 0
     form = SearchStudentForm()
@@ -150,7 +171,7 @@ def admin_page():
         page = total // 6
         return redirect("/admin?page="+str(page))
 
-    for  i in range(page_len):
+    for i in range(page_len):
         index = (page_len * (page - 1)) + i
         if index < len(student_list):
             result.append(student_list[index])
@@ -176,7 +197,6 @@ def admin_page():
     if last_page >= 3:
         page_list.append(4)
     # print('[page_list]', page_list)
-
 
     return render_template('admin/index.html', student_list=student_list, page=page, page_list=page_list, last_page=last_page, form=form)
 
@@ -209,7 +229,8 @@ def create_page():
         # 把資料存到 session 內
         new_student['birthday'] = new_student['birthday'].strftime('%Y-%m-%d')
         new_student['created_at'] = created_at.strftime('%Y-%m-%d %H:%M:%S')
-        title = ['國別', '房號', '床號', '班級', '學號', '姓名', '身分證字號', '生日', '手機', '家裡電話', '地址', '緊急聯絡人', '緊急聯絡人電話', '建立時間']
+        title = ['國別', '房號', '床號', '班級', '學號', '姓名', '身分證字號',
+                 '生日', '手機', '家裡電話', '地址', '緊急聯絡人', '緊急聯絡人電話', '建立時間']
         new_student = list(zip(title, new_student.values()))
         # print('[新增資料]', new_student)
         session['new_student'] = new_student
@@ -223,6 +244,7 @@ def createfinish_page():
     new_student = session['new_student']
     # print('[資料]', new_student)
     return render_template('admin/create_done.html', new_student=new_student)
+
 
 @app.route('/admin/edit/<string:student_id>', methods=['GET', 'POST'])
 def edit_page(student_id):
@@ -251,7 +273,8 @@ def edit_page(student_id):
             'updated_at': updated_at,
         }
         # 更新資料
-        db.collection('student_list').document(student_id).update(updated_student)
+        db.collection('student_list').document(
+            student_id).update(updated_student)
         return redirect(url_for('admin_page'))
     form.country.data = student['country']
     form.room.data = student['room']
@@ -269,53 +292,48 @@ def edit_page(student_id):
 
     return render_template('admin/edit.html', form=form, student=student)
 
+
 @app.route('/api/delete/<string:student_id>', methods=['POST'])
 def delete_student(student_id):
     db.collection('student_list').document(student_id).delete()
     return jsonify({'result': 'success'})
 
-@app.route('/search', methods=['GET', 'POST'])
+
+@app.route('/search', methods=['GET'])
 def search_page():
     return render_template('search.html')
 
+
 @app.route('/api/search/<string:mode>', methods=['POST'])
 def search_student(mode):
+    ID_Token = request.json['IDToken']
     search_data = []
-    if mode == 'room':
-        room = request.json['search']
-        docs = db.collection('student_list').stream()
-        for doc in docs:
-            student = doc.to_dict()
-            student['id'] = doc.id
-            # student['birthday'] = student['birthday'].strftime('%Y-%m-%d')
-            # student['created_at'] = student['created_at'].strftime('%Y-%m-%d %H:%M:%S')
-            # print('[room]', room)
-            if room in student['room'] and room != '':
-                search_data.append(student)
-        # print('[search_data]', search_data)
-    elif mode == 'name':
-        name = request.json['search']
-        docs = db.collection('student_list').stream()
-        for doc in docs:
-            student = doc.to_dict()
-            student['id'] = doc.id
-            # student['birthday'] = student['birthday'].strftime('%Y-%m-%d')
-            # student['created_at'] = student['created_at'].strftime('%Y-%m-%d %H:%M:%S')
-            # print('[name]', name)
-            if name in student['name'] and name != '':
-                search_data.append(student)
+    if ID_Token == id_token:
+        if mode == 'room':
+            room = request.json['search']
+            for student in search_student_data:
+                if room in student['room'] and room != '':
+                    search_data.append(student)
+        elif mode == 'name':
+            name = request.json['search']
+            for student in search_student_data:
+                if name in student['name'] and name != '':
+                    search_data.append(student)
         # print('[search_data]', search_data)
 
     return jsonify(search_data)
-        
+
+
 @app.route('/api/info', methods=['POST'])
 def get_student_info():
     student_id = request.json['id']
-    doc = db.collection('student_list').document(student_id).get()
-    student = doc.to_dict()
-    student['id'] = doc.id
-    student['birthday'] = student['birthday'].strftime('%Y-%m-%d')
-    student['created_at'] = student['created_at'].strftime('%Y-%m-%d %H:%M:%S')
+    ID_Token = request.json['IDToken']
+    if ID_Token == id_token:
+        doc = db.collection('student_list').document(student_id).get()
+        student = doc.to_dict()
+        student['id'] = doc.id
+        student['birthday'] = student['birthday'].strftime('%Y-%m-%d')
+        student['created_at'] = student['created_at'].strftime('%Y-%m-%d %H:%M:%S')
     return jsonify(student)
 
 
@@ -332,6 +350,7 @@ def login_user():
 
 @app.route('/api/login', methods=['POST'])
 def login():
+    global id_token
     id_token = request.json['idToken']
     # print('[id_token]', id_token)
     # 過期時間
@@ -343,8 +362,7 @@ def login():
         expires = datetime.datetime.now() + expires_in
         # 將session_cookie存到session內
         res = jsonify({'status': 'success'})
-        res.set_cookie(login_token, session_cookie,
-                       expires=expires, httponly=True, samesite='Lax')
+        res.set_cookie(login_token, session_cookie, expires=expires, httponly=True, samesite='Lax')
         return res
     except:
         return abort(401, "無效的ID Token")
@@ -357,6 +375,7 @@ def logout():
     res.set_cookie(login_token, expires=0)
     return res
 
+
 if __name__ == '__main__':
     # 應用程式開始運行
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=2009, debug=True)

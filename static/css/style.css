@@ -164,3 +164,37 @@ html {
     color: #fff;
     background-color: #fa6e52;
 }
+
+@media screen and (max-width: 1390px) {
+    /* .card {
+        width: calc(50% - 2rem);
+        min-width: calc(50% - 2rem);
+    } */
+    #mobile-menu-1 {
+        right: 10px;
+    }
+}
+
+@media screen and (max-width: 1280px) {
+    #mobile-menu-1 {
+        right: auto;
+    }
+}
+
+@media screen and (max-width: 1130px) {
+    #mobile-menu-1 {
+        right: 10px;
+    }
+}
+
+@media screen and (max-width: 1023px) {
+    #mobile-menu-1 {
+        right: auto;
+    }
+}
+
+@media screen and (max-width: 888px) {
+    #mobile-menu-1 {
+        right: 10px;
+    }
+}

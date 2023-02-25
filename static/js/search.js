@@ -7,6 +7,7 @@ searchAnswer.focus();
 for (let i = 0; i < searchSwitch.length; i++) {
     searchSwitch[i].addEventListener('click', (event) => {
         event.preventDefault();
+        searchAnswer.focus();
         for (let i = 0; i < searchSwitch.length; i++) {
             searchSwitch[i].classList.remove('active');
         }

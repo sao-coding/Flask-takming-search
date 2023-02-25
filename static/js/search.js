@@ -18,6 +18,7 @@ for (let i = 0; i < searchSwitch.length; i++) {
 }
 
 const searchAnswer = document.querySelector('#search-answer')
+searchAnswer.focus();
 searchAnswer.addEventListener('input', (event) => {
     console.log(event.target.value);
     let searchAnswer = event.target.value;

@@ -4,6 +4,7 @@ from forms import (
     SearchStudentForm,
 )
 from flask import Flask, render_template, request, session, redirect, url_for, flash, jsonify, abort
+# import json
 import time
 import datetime
 import pytz
@@ -15,8 +16,29 @@ cred = credentials.Certificate("./key.json")
 firebase_admin.initialize_app(cred)
 # 建立資料庫的實例(db)
 db = firestore.client()
+# 獲取最新的學生資料
+def get_student_data(db):
+    student_data_object = db.collection('student_list').order_by('bed').stream()
+    student_data = []
+    for item in student_data_object:
+        student = item.to_dict()
+        student['id'] = item.id
+        created_at = str(student['created_at']).split('.')[0]
+        # student['created_at'] = datetime.datetime.strftime(datetime.datetime.strptime(
+        #     created_at, '%Y-%m-%d %H:%M:%S'), "%Y-%m-%d %H:%M:%S")
+        student['created_at'] = str(datetime.datetime.strptime(
+            created_at, '%Y-%m-%d %H:%M:%S'))
+        # print(type(student['created_at']), [student['created_at']])
+        student_data.append(student)
+    return student_data
+
+student_data = get_student_data(db)
+
+# f = open("data.json","w",encoding="utf-8")
+# f.write(json.dumps(student_data, default=str))
+# f.close()
+
 id_token = ""
-search_student_data = []
 
 # 引用flask相關資源
 # 引用各種表單類別
@@ -100,41 +122,11 @@ def guard():
     # 檢查是否為登入路由
     if current_route in login_route_list and not is_login:
         return redirect(url_for('index_page'))
-    elif current_route in 'search_page' and is_login:
-        global search_student_data
-        student = []
-        search_student_data = []
-        search = db.collection('student_list').order_by('bed').stream()
-        for item in search:
-            student = item.to_dict()
-            student['id'] = item.id
-            # student['birthday'] = student['birthday'].strftime('%Y-%m-%d')
-            # student['created_at'] = student['created_at'].strftime('%Y-%m-%d %H:%M:%S')
-            search_student_data.append(student)
-        print("抓取所有學生資料")
-        print(len(search_student_data))
 
 
 @app.route('/')
 def index_page():
-    # 取得資料庫的商品列表(product_list)資料
-    collection = db.collection('product_list').order_by(
-        'created_at', direction='DESCENDING').get()
-    # 定義產品列表
-    product_list = []
-    # 把這個集合內的文件取出
-    for doc in collection:
-        # # print('[doc]', doc)
-        # 取得文件內的資料(字典)
-        # # print('[doc.to_dict()]', doc.to_dict())
-        product = doc.to_dict()
-        # # print('[文件的ID]', doc.id)
-        # 取得文件的ID並存到product內
-        product['id'] = doc.id
-        # # print('[商品]', product)
-        product_list.append(product)
-    # 首頁路由
-    return render_template('index.html', product_list=product_list)
+    return render_template('index.html')
 
 # TODO:優化Firebase資料庫的讀取數量
 @app.route('/admin', methods=['GET', 'POST'])
@@ -144,19 +136,22 @@ def admin_page():
     if page < 1:
         page = 1
     student_list = []
-    collection = db.collection('student_list').order_by('bed').stream()
-    for doc in collection:
-        student = doc.to_dict()
-        student['id'] = doc.id
-        created_at = str(student['created_at']).split('.')[0]
-        student['created_at'] = datetime.datetime.strptime(
-            created_at, '%Y-%m-%d %H:%M:%S')
-        student_list.append(student)
+    global student_data
+    student_list = student_data.copy()
+    # student_list = student_data.copy()
+    # len_student_list = len(student_list)
+
+    # for doc in collection:
+    #     student = doc.to_dict()
+    #     student['id'] = doc.id
+    #     created_at = str(student['created_at']).split('.')[0]
+    #     student['created_at'] = datetime.datetime.strptime(
+    #         created_at, '%Y-%m-%d %H:%M:%S')
+    #     student_list.append(student)
     page_len = 6
     result = []
     page_list = []
-    last_page = int(len(student_list) / page_len) + 1 if len(
-        student_list) % page_len != 0 else int(len(student_list) / page_len)
+    last_page = int(len(student_list) / page_len) + 1 if len(student_list) % page_len != 0 else int(len(student_list) / page_len)
 
     total = 0
     count = 0
@@ -226,6 +221,9 @@ def create_page():
         # datetime.datetime.combine(form.birthday.data, datetime.time(0, 0))
         # 新增資料
         db.collection('student_list').add(new_student)
+        # 更新後端資料庫
+        global student_data
+        student_data = get_student_data(db)
         # 把資料存到 session 內
         new_student['birthday'] = new_student['birthday'].strftime('%Y-%m-%d')
         new_student['created_at'] = created_at.strftime('%Y-%m-%d %H:%M:%S')
@@ -273,8 +271,10 @@ def edit_page(student_id):
             'updated_at': updated_at,
         }
         # 更新資料
-        db.collection('student_list').document(
-            student_id).update(updated_student)
+        db.collection('student_list').document(student_id).update(updated_student)
+        global student_data
+        student_data = get_student_data(db)
+
         return redirect(url_for('admin_page'))
     form.country.data = student['country']
     form.room.data = student['room']
@@ -296,6 +296,8 @@ def edit_page(student_id):
 @app.route('/api/delete/<string:student_id>', methods=['POST'])
 def delete_student(student_id):
     db.collection('student_list').document(student_id).delete()
+    global student_data
+    student_data = get_student_data(db)
     return jsonify({'result': 'success'})
 
 
@@ -311,15 +313,14 @@ def search_student(mode):
     if ID_Token == id_token:
         if mode == 'room':
             room = request.json['search']
-            for student in search_student_data:
+            for student in student_data:
                 if room in student['room'] and room != '':
                     search_data.append(student)
         elif mode == 'name':
             name = request.json['search']
-            for student in search_student_data:
+            for student in student_data:
                 if name in student['name'] and name != '':
                     search_data.append(student)
-        # print('[search_data]', search_data)
 
     return jsonify(search_data)
 

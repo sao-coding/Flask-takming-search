@@ -2,7 +2,8 @@ let searchType = 'room';
 let lookData = null;
 
 const searchSwitch = document.querySelectorAll('.search');
-
+const searchAnswer = document.querySelector('#search-answer')
+searchAnswer.focus();
 for (let i = 0; i < searchSwitch.length; i++) {
     searchSwitch[i].addEventListener('click', (event) => {
         event.preventDefault();
@@ -17,8 +18,6 @@ for (let i = 0; i < searchSwitch.length; i++) {
     });
 }
 
-const searchAnswer = document.querySelector('#search-answer')
-searchAnswer.focus();
 searchAnswer.addEventListener('input', (event) => {
     console.log(event.target.value);
     let searchAnswer = event.target.value;

@@ -23,12 +23,6 @@ def get_student_data(db):
     for item in student_data_object:
         student = item.to_dict()
         student['id'] = item.id
-        created_at = str(student['created_at']).split('.')[0]
-        # student['created_at'] = datetime.datetime.strftime(datetime.datetime.strptime(
-        #     created_at, '%Y-%m-%d %H:%M:%S'), "%Y-%m-%d %H:%M:%S")
-        student['created_at'] = str(datetime.datetime.strptime(
-            created_at, '%Y-%m-%d %H:%M:%S'))
-        # print(type(student['created_at']), [student['created_at']])
         student_data.append(student)
     return student_data
 
@@ -330,12 +324,13 @@ def get_student_info():
     student_id = request.json['id']
     ID_Token = request.json['IDToken']
     if ID_Token == id_token:
-        doc = db.collection('student_list').document(student_id).get()
-        student = doc.to_dict()
-        student['id'] = doc.id
-        student['birthday'] = student['birthday'].strftime('%Y-%m-%d')
-        student['created_at'] = student['created_at'].strftime('%Y-%m-%d %H:%M:%S')
-    return jsonify(student)
+        for student in student_data:
+            if student['id'] == student_id:
+                student['birthday'] = student['birthday'].strftime('%Y-%m-%d')
+                student['created_at'] = student['created_at'].strftime('%Y-%m-%d %H:%M:%S')
+                # if student['updated_at'] != None:
+                #     student['updated_at'] = student['updated_at'].strftime('%Y-%m-%d %H:%M:%S')
+                return jsonify(student)
 
 
 @app.route('/api/login/user', methods=['POST'])
